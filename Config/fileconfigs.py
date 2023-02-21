@@ -1,0 +1,1 @@
+humidityhtmlfile = "Templates/humidity.html"
