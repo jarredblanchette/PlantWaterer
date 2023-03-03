@@ -5,7 +5,7 @@ from Repositories import iRepository
 
 class HumidityRepository(iRepository):
 
-    def __int__(self, probe=None):
+    def __init__(self, probe=None):
         if probe is None:
             probe = HumidityProbe(location=HumidityConfig.location,
                                   min_value=HumidityConfig.min_value,

@@ -5,7 +5,7 @@ from Repositories import iRepository
 
 class TemperatureRepository(iRepository):
 
-    def __int__(self, probe=None):
+    def __init__(self, probe=None):
         if probe is None:
             probe = TemperatureProbe(location=TemperatureConfig.location)
 
