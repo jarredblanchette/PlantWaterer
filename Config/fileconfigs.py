@@ -1,1 +1,2 @@
-humidityhtmlfile = "Templates/humidity.html"
+indexhtmlfile = "Templates/index.html"
+

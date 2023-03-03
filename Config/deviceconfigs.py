@@ -1,5 +1,5 @@
 from machine import Pin, ADC
-from device import Device
+from Devices.device import Device
 
 
 class HumidityConfig(Device):

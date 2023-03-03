@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
-    <title>Index</title>
+    <title>Title</title>
     <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32"/>
 </head>
 <body>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css"
       integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
-<h1 id="h1">Hello, you are currently on the index</h1>
-<a href="/humidity">Click here to see the humidity</a>
+<h1 id="h1">Here is a header, yo</h1>
+<p>humidity is: {humidity} </p>
+<form action="" method="POST">
+    <input name="input_name" id="input_id"> some value?
+    <button>click me!</button>
+</form>
+<a href="/"> Click here to go back to the index</a>
 <script>
+document.getElementById("h1").innerHTML = "New text!";
+
+
 </script>
 </body>
 </html>

@@ -1,8 +1,6 @@
-import humidityprobe
+from Devices import humidityprobe
 import uasyncio
-from Config.fileconfigs import humidityhtmlfile
 from ConnectionProvider.connectionprovider import connect, open_socket
-from humidityprobe import HumidityProbe
 import re
 import select
 
@@ -36,80 +34,79 @@ def webpage(fileaddress, humidity):
     return str(html.format(humidity=humidity))
 
 
-def gethumidity():
-    """route for /humidity"""
-    htmlfile = open(humidityhtmlfile, 'r')
-    html = htmlfile.read()
-    return str(html.format(humidity=humidityprobe.HumidityProbe().poll()))
+class WebServer:
 
-
-def getindex():
-    """route for / and /index"""
-    return gethtml("Templates/index.html")
-
-
-def gettempreature():
-    return gethtml("Templates/index.html")
-
-
-def favicon():
-    return open("favicon-32x32.png", 'rb').read()
-
-
-def p():
-    return ""
-
-
-async def serve(conn):
-    wrapped_conn = select.poll()
-    wrapped_conn.register(conn, select.POLLIN)
-
-    routes = {
-        "GET": {
-            "/": getindex,
-            "/index": getindex,
-            "/humidity": gethumidity,
-            "/temperature": gettempreature,
-            "/favicon.ico": favicon,
-            "/favicon-32x32.png": favicon
+    def __init__(self):
+        self.routes = {
+            "GET": {
+                "/": self.getindex,
+                "/favicon.ico": self.favicon,
+                "/favicon-32x32.png": self.favicon,
+            }
         }
-    }
+        self.errors = {404: self.notfound}
 
-    print(f"created poll object: {wrapped_conn}")
-    while True:
-        print("waiting for connection")
-        try:
-            events = wrapped_conn.poll(500)
-            for sock, event in events:
-                if event and select.POLLIN:
-                    print(f"Connection! event: {event}")
+    def get_routes(self):
+        return self.routes
 
-                    client = conn.accept()[0]
-                    request = client.recv(1024)
-                    string_request = str(request.decode('UTF-8'))
+    def set_routes(self, routes):
+        self.routes = routes
 
-                    # TO DO: Routing, but like better
-                    method = get_request_method(string_request)
-                    query = get_request_query_string(string_request)
-                    bound_method = routes.get(method).get(query)
+    def add_routes(self, new_routes):
+        for method in new_routes:
+            if not self.routes.__contains__(method):
+                self.routes[method] = {}
+            for route in new_routes[method]:
+                self.routes[method][route] = new_routes[method][route]
 
-                    print(f"{method}: {query}: {bound_method.__name__}")
+    @staticmethod
+    def getindex():
+        """route for / and /index"""
+        return gethtml("Templates/index.html")
 
-                    if bound_method is not None:
-                        response = bound_method()
-                        client.send(response)
-                        print(f"sent {response}")
+    @staticmethod
+    def notfound():
+        return gethtml("Templates/404.html")
 
-                    client.close()
+    @staticmethod
+    def favicon():
+        return open("favicon-32x32.png", 'rb').read()
+    async def serve(self, conn):
+        wrapped_conn = select.poll()
+        wrapped_conn.register(conn, select.POLLIN)
 
-            print(f"sleeping")
-            await uasyncio.sleep(1)
-        except Exception as e:
-            print(f"Exception! {e}")
+        while True:
+            print(f"waiting for connection")
+            try:
+                events = wrapped_conn.poll(500)
+                for sock, event in events:
+                    if event and select.POLLIN:
+                        print(f"Connection! event: {event}")
 
+                        client = conn.accept()[0]
+                        request = client.recv(1024)
+                        string_request = str(request.decode('UTF-8'))
 
-def createserver():
-    ip = connect()
-    sock = open_socket(ip)
-    serve(sock)
+                        # TO DO: Routing, but like better
+                        method = get_request_method(string_request)
+                        query = get_request_query_string(string_request)
+                        bound_method = self.routes.get(method).get(query)
 
+                        if bound_method is None:
+                            client.send(self.errors[404]())
+                        else:
+                            response = bound_method()
+                            client.send(response)
+                            print(f"sent {response}")
+
+                        client.close()
+
+                print(f"sleeping")
+                await uasyncio.sleep(1)
+            except Exception as e:
+                print(f"Exception! {e}")
+    #
+    # def createserver():
+    #     ip = connect()
+    #     sock = open_socket(ip)
+    #     serve(sock)
