@@ -1,6 +1,6 @@
 from Devices.humidityprobe import HumidityProbe
 from Config.deviceconfigs import HumidityConfig
-from Repositories import iRepository
+from Repositories.iRepository import iRepository
 
 
 class HumidityRepository(iRepository):
@@ -15,7 +15,7 @@ class HumidityRepository(iRepository):
 
     def get_humidity(self):
         """route for /humidity"""
-        humidityhtmlfile = "Templates/humidity.html"
+        humidityhtmlfile = "Repositories/Humidity/Templates/humidity.html"
         htmlfile = open(humidityhtmlfile, 'r')
         html = htmlfile.read()
         return str(html.format(humidity=self.probe.poll()))

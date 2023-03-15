@@ -1,6 +1,3 @@
-from abc import ABC
-
-
-class iRepository(ABC):
+class iRepository():
     def get_routes(self):
         pass

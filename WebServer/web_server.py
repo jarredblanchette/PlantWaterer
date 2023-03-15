@@ -1,6 +1,4 @@
-from Devices import humidityprobe
 import uasyncio
-from ConnectionProvider.connectionprovider import connect, open_socket
 import re
 import select
 
@@ -54,15 +52,15 @@ class WebServer:
 
     def add_routes(self, new_routes):
         for method in new_routes:
-            if not self.routes.__contains__(method):
+            if method not in self.routes:
                 self.routes[method] = {}
             for route in new_routes[method]:
                 self.routes[method][route] = new_routes[method][route]
 
-    @staticmethod
-    def getindex():
+    # @staticmethod
+    def getindex(self):
         """route for / and /index"""
-        return gethtml("Templates/index.html")
+        return gethtml("Templates/index.html").format(log=self.routes)
 
     @staticmethod
     def notfound():
@@ -71,6 +69,7 @@ class WebServer:
     @staticmethod
     def favicon():
         return open("favicon-32x32.png", 'rb').read()
+
     async def serve(self, conn):
         wrapped_conn = select.poll()
         wrapped_conn.register(conn, select.POLLIN)
@@ -105,8 +104,3 @@ class WebServer:
                 await uasyncio.sleep(1)
             except Exception as e:
                 print(f"Exception! {e}")
-    #
-    # def createserver():
-    #     ip = connect()
-    #     sock = open_socket(ip)
-    #     serve(sock)
