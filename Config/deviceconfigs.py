@@ -17,7 +17,7 @@ class TemperatureConfig(Device):
 
 
 class PumpConfig():
-    location = Pin(0,Pin.OUT)
+    location = Pin(16, Pin.OUT)
 
 
 

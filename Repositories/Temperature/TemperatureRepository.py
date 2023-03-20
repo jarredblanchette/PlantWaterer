@@ -11,7 +11,7 @@ class TemperatureRepository(iRepository):
 
         self.probe = probe
 
-    def get_temperature(self):
+    def get_temperature(self, matches):
         """route for /temperature"""
         temperaturehtmlfile = "Repositories/Temperature/Templates/temperature.html"
         htmlfile = open(temperaturehtmlfile, 'r')
@@ -19,4 +19,4 @@ class TemperatureRepository(iRepository):
         return str(html.format(temperature=self.probe.poll()))
 
     def get_routes(self):
-        return {"GET": {"/temperature": self.get_temperature}}
+        return {"GET": {"^\/temperature$": self.get_temperature}}

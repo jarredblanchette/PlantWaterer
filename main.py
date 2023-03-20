@@ -40,19 +40,9 @@ async def main():
     # watererTask = uasyncio.create_task(run_waterer(5, 40, sp, 10))
     # uasyncio.create_task(periodically_update())
 
-    # print(f"hello from the main thread")
-    # wrapped_my_time = select.poll()
-    # wrapped_my_time.register(mytime)
     while True:
-        # events = wrapped_my_time.poll(500)
-        # for sock, event in events:
-        #     if event and select.POLLIN:
-        # print(f"mainthread: mytime is {mytime}")
         await uasyncio.sleep(1)
 
 
 if __name__ == '__main__':
-    # level = logging.INFO
-    # logging.basicConfig(level=level)
     uasyncio.run(main())
-

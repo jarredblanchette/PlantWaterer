@@ -13,7 +13,7 @@ class HumidityRepository(iRepository):
 
         self.probe = probe
 
-    def get_humidity(self):
+    def get_humidity(self, matches):
         """route for /humidity"""
         humidityhtmlfile = "Repositories/Humidity/Templates/humidity.html"
         htmlfile = open(humidityhtmlfile, 'r')
@@ -21,4 +21,4 @@ class HumidityRepository(iRepository):
         return str(html.format(humidity=self.probe.poll()))
 
     def get_routes(self):
-        return {"GET": {"/humidity": self.get_humidity}}
+        return {"GET": {"^\/humidity$": self.get_humidity}}
