@@ -1,12 +1,11 @@
 import utime
 from machine import Pin
 from WebServer.web_server import WebServer
-from ConnectionProvider.connnectionprovider import connect,open_socket
+from ConnectionProvider.connnectionprovider import connect, open_socket
 import uasyncio
 from Repositories.Temperature.TemperatureRepository import TemperatureRepository
 from Repositories.Humidity.HumidityRepository import HumidityRepository
-
-mytime = utime.time()
+from logger import Logger, Level
 
 
 async def periodically_update():
@@ -17,7 +16,7 @@ async def periodically_update():
         await uasyncio.sleep(10)
 
 
-async def main():
+async def main(logger):
     led = Pin("LED", Pin.OUT)
     led.off()
 
@@ -45,4 +44,5 @@ async def main():
 
 
 if __name__ == '__main__':
-    uasyncio.run(main())
+    logger = Logger(print,Level.Error,True,True)
+    uasyncio.run(main(logger))
