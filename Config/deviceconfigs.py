@@ -15,6 +15,11 @@ class TemperatureConfig(Device):
     min_value = 0
     max_value = 65535
 
+class I2CConfig(Device):
+    sdaPin = Pin(0)
+    sclPin = Pin(1)
+    location = (sdaPin, sclPin)
+
 
 class PumpConfig():
     location = Pin(16, Pin.OUT)
