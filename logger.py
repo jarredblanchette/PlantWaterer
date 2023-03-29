@@ -23,7 +23,7 @@ class Level:
 
 
 class Logger(object):
-    def __init__(self, destination, level, include_level,minimal_header):
+    def __init__(self, destination=None, level=None, include_level=None, minimal_header=None):
         if level is None:
             level = Level.Error
         self.level = level
@@ -40,7 +40,7 @@ class Logger(object):
             minimal_header = False
         self.minimal_header = minimal_header
 
-    def log(self, message, level):
+    def log(self, message, level=Level.Error):
         if level < self.level or self.level == Level.Disabled:
             return
 

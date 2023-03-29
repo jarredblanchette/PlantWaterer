@@ -1,4 +1,3 @@
-import Config.deviceconfigs
 import utime
 from machine import Pin, I2C
 from WebServer.web_server import WebServer
@@ -8,6 +7,7 @@ from Repositories.Temperature.TemperatureRepository import TemperatureRepository
 from Repositories.Humidity.HumidityRepository import HumidityRepository
 from logger import Logger, Level
 from Devices.display import Display
+from water_plant import Waterer
 
 
 async def periodically_update():
@@ -31,12 +31,14 @@ async def main(logger):
     humid_repo = HumidityRepository()
     repos = [temp_repo, humid_repo]
 
+    plant_waterer = Waterer(period_seconds=5,logger=logger,poll_function=humid_repo.get_humidity)
+
     server = WebServer()
     for repo in repos:
         server.add_routes(repo.get_routes())
 
     serverTask = uasyncio.create_task(server.serve(connection))
-    # watererTask = uasyncio.create_task(run_waterer(5, 40, sp, 10))
+    watererTask = uasyncio.create_task(plant_waterer.run_waterer())
     # uasyncio.create_task(periodically_update())
 
     while True:

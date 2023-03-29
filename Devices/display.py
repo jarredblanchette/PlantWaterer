@@ -1,4 +1,4 @@
-from Devices.ssd1306 import SSD1306_I2C
+from drivers.ssd1306 import SSD1306_I2C
 from Config.deviceconfigs import I2CConfig
 from Devices.device import Device
 from machine import I2C
