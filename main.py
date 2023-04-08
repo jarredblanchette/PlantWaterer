@@ -1,4 +1,3 @@
-import Config.deviceconfigs
 import utime
 from machine import Pin, I2C
 from WebServer.web_server import WebServer
@@ -8,6 +7,7 @@ from Repositories.Temperature.TemperatureRepository import TemperatureRepository
 from Repositories.Humidity.HumidityRepository import HumidityRepository
 from logger import Logger, Level
 from Devices.display import Display
+from water_plant import Waterer
 
 
 async def periodically_update():
@@ -22,21 +22,29 @@ async def main(logger):
     led = Pin("LED", Pin.OUT)
     led.off()
 
-    ip = await connect()
-    print(f"my ip: {str(ip)}")
-    connection = open_socket(ip)
-    print(f"my socket: {connection}")
+    try:
+        ip = await connect()
+        print(f"my ip: {str(ip)}")
+        connection = open_socket(ip)
+        print(f"my socket: {connection}")
+    except Exception as e:
+        print(f"connection timed out, proceeding with no connection.  Error {e}")
+        connection = None
+
 
     temp_repo = TemperatureRepository()
     humid_repo = HumidityRepository()
     repos = [temp_repo, humid_repo]
 
-    server = WebServer()
-    for repo in repos:
-        server.add_routes(repo.get_routes())
+    plant_waterer = Waterer(period_seconds=5,logger=logger,poll_function=humid_repo.get_humidity)
 
-    serverTask = uasyncio.create_task(server.serve(connection))
-    # watererTask = uasyncio.create_task(run_waterer(5, 40, sp, 10))
+    if connection is not None:
+        server = WebServer()
+        for repo in repos:
+            server.add_routes(repo.get_routes())
+        serverTask = uasyncio.create_task(server.serve(connection))
+
+    watererTask = uasyncio.create_task(plant_waterer.run_waterer())
     # uasyncio.create_task(periodically_update())
 
     while True:
